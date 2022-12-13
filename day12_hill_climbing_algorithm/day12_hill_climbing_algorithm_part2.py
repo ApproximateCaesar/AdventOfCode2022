@@ -4,7 +4,7 @@ from collections import deque
 from copy import deepcopy
 
 PATH = "C:/Users/Julian_local/Documents/Coding Projects/AdventOfCode2022/"
-with open(PATH + "day12/day12_input.txt") as f:
+with open(PATH + "day12_hill_climbing_algorithm/day12_input.txt") as f:
     valuemap = f.read().splitlines()
 
 WIDTH = len(valuemap[0])  # horizontal width of the valuemap
