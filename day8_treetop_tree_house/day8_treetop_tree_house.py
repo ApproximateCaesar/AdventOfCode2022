@@ -51,7 +51,7 @@ def in_bounds(x, y):
 
 # gets view distance for the tree at i, j. x_step and y_step determine view direction
 def get_view_dist(i, j, x_step, y_step):
-    view_dist = 0  # always start with 1 from adjacent tree
+    view_dist = 0
     x = j + x_step
     y = i + y_step
     while in_bounds(x, y) and tree_heights[y][x] < tree_heights[i][j]:  # while view not blocked
