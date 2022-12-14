@@ -40,6 +40,44 @@ for j in range(WIDTH):
 # count number of visible trees
 print(f'{sum(map(sum, visible))} trees are visible from outside the grid.')
 
-# part 2 ###  apparently this can also be done in O(n)
-scenic_score = [[1 for col in range(WIDTH)] for row in range(HEIGHT)]
+# part 2 ###  apparently this part can be done in O(n)
+
+
+# checks whether x,y indices are within the tree grid bounds
+def in_bounds(x, y):
+    is_in_bounds = True if 0 <= x < WIDTH and 0 <= y < HEIGHT else False
+    return is_in_bounds
+
+
+# gets view distance for the tree at i, j. x_step and y_step determine view direction
+def get_view_dist(i, j, x_step, y_step):
+    view_dist = 0  # always start with 1 from adjacent tree
+    x = j + x_step
+    y = i + y_step
+    while in_bounds(x, y) and tree_heights[y][x] < tree_heights[i][j]:  # while view not blocked
+        view_dist += 1
+        x += x_step
+        y += y_step
+    if in_bounds(x, y):
+        view_dist += 1  # add final tree if we finish in bounds
+    return view_dist
+
+
+max_scenic_score = 0
+for i in range(1, HEIGHT - 1):  # don't include (literal) edge cases because they will have scenic score 0
+    for j in range(1, WIDTH - 1):
+        view_dist_left = get_view_dist(i, j, -1, 0)
+        view_dist_right = get_view_dist(i, j, 1, 0)
+        view_dist_up = get_view_dist(i, j, 0, -1)
+        view_dist_down = get_view_dist(i, j, 0, 1)
+
+        scenic_score = view_dist_left * view_dist_right * view_dist_up * view_dist_down
+        if scenic_score > max_scenic_score:
+            max_scenic_score = scenic_score
+
+print(f'The max scenic score is {max_scenic_score}')
+
+
+
+
 
