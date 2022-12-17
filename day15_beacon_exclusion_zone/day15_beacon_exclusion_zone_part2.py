@@ -4,7 +4,9 @@
  so I am using a completely different approach: search in a small grid around intersection
  points of sensor exclusion zone boundaries, because we know the distress
  beacon must be near one of these points (it will be bounded by intersecting zone boundaries).
- This method assumes the beacon isn't at the very edge of the search area."""
+ Using a small grid is just a hack that stops me from having to consider every geometrical case
+ and also lets me ignore the arbitrary rounding that happened in computing intersection points
+ This method also assumes the beacon isn't at the very edge of the search area."""
 
 import re
 
@@ -47,17 +49,15 @@ for line in input_txt:
     beacons.append(tuple(matches[2:4]))
     beacon_dists.append(manhattan_dist(sensors[-1], beacons[-1]))
 
-search_bound = 4000000
+search_bound = 4000000  # max x and y positions the beacon can be within
 possible_int_points = find_possible_intersection_points(sensors, beacon_dists, search_bound)
-search_grid_size = 2  # radius of square grid in which to search for beacon
-i = 0
+search_grid_size = 2  # radius of square grid around intersection point in which to search for beacon
 beacon_found = False
-beacon_pos = None
+beacon_pos = None  # distress beacon position once found
+i = 0
 while i < len(possible_int_points) and not beacon_found:
     point = possible_int_points[i]
     # search near possible intersection point.
-    # This is just a hack that stops me from having to consider every geometrical case
-    # and also ignore the arbitrary rounding that happened in computing intersection points
     x = point[0] - search_grid_size
     while x <= point[0] + search_grid_size and 0 <= x <= search_bound and not beacon_found:
         y = point[1] - search_grid_size
