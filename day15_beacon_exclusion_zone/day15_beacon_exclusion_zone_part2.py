@@ -6,7 +6,8 @@
  beacon must be near one of these points (it will be bounded by intersecting zone boundaries).
  Using a small grid is just a hack that stops me from having to consider every geometrical case
  and also lets me ignore the arbitrary rounding that happened in computing intersection points
- This method also assumes the beacon isn't at the very edge of the search area."""
+ This method also assumes the beacon isn't at the very edge of the search area.
+ This method is beyond cursed but also executed in 0.05 seconds, so I'll take it."""
 
 import re
 
@@ -35,7 +36,6 @@ def find_possible_intersection_points(sensors, beacon_dists, search_bound):
     return intersection_points
 
 
-
 PATH = "C:/Users/Julian_local/Documents/Coding Projects/AdventOfCode2022/"
 with open(PATH + "day15_beacon_exclusion_zone/day15_input.txt") as f:
     input_txt = f.read().splitlines()
@@ -57,7 +57,7 @@ beacon_pos = None  # distress beacon position once found
 i = 0
 while i < len(possible_int_points) and not beacon_found:
     point = possible_int_points[i]
-    # search near possible intersection point.
+    # search in a small grid near possible intersection point.
     x = point[0] - search_grid_size
     while x <= point[0] + search_grid_size and 0 <= x <= search_bound and not beacon_found:
         y = point[1] - search_grid_size
