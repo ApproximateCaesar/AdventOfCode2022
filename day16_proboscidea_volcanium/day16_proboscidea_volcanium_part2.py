@@ -6,8 +6,7 @@ flow rates, using shortest distances as edge weights. Then brute force search al
 n is the number of nodes in the complete graph is that most sequences never get to length n
 due to the time limit. Part 2 increases complexity to n*(n-2)*(n-4)*...*2 so another optimisation
 I made was to stop each sequence if continuing it couldn't possibly beat the current max TEP.
-Part 2 is still painfully slow, and I only got the answer by printing out TEP_max every time it
-increased and inputting each value into the website. A complete search would probably take hours."""
+Part 2 is still painfully slow, and took 2 hrs to complete."""
 
 from collections import deque
 import re
