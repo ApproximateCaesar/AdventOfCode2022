@@ -6,10 +6,13 @@ flow rates, using shortest distances as edge weights. Then brute force search al
 n is the number of nodes in the complete graph is that most sequences never get to length n
 due to the time limit. Part 2 increases complexity to n*(n-2)*(n-4)*...*2 so another optimisation
 I made was to stop each sequence if continuing it couldn't possibly beat the current max TEP.
-Part 2 is still painfully slow."""
+Part 2 is still painfully slow, and I only got the answer by printing out TEP_max every time it
+increased and inputting each value into the website. A complete search would probably take hours."""
 
 from collections import deque
 import re
+import time
+import cProfile
 from pprint import PrettyPrinter
 
 
@@ -61,20 +64,31 @@ shortest_path_dists = all_pairs_shortest_paths(adjacency_dict)
 # pp.pprint(shortest_path_dists)
 
 # check all feasible valve opening sequences using shortest distances between valves
-usable_valves = [valve for valve in valve_labels if flow_rates[valve] != 0]  # valves with non-zero flow rate
+usable_valves = set([valve for valve in valve_labels if flow_rates[valve] != 0])  # valves with non-zero flow rate
 t_max = 26  # time limit in minutes
-#  TODO can start TEP_max at a larger value to avoid recomputing initial sequences from previous runs?
-#   Largest value found so far is 2375
-TEP_max = 2375  # maximum total eventual pressure
+#  TODO can start TEP_max at a larger value to avoid recomputing initial sequences from previous runs
+#   Largest value found so far is 2455.
+TEP_max = 2455  # maximum total eventual pressure
 best_sequence = []  # optimal sequence in which to open valves, taking shortest paths inbetween
 
 
-def find_max_TEP(t, t_max, TEP, usable_valves, current_valves, sequence):
+def find_max_TEP(t, t_max, TEP, usable_valves, current_valves):  #, sequence):
+    """Finds the maximum TEP able to be released by 2 people in time t_max.
+    @:param t time after last move person made
+    @:param t_max time limit
+    @:param TEP current total eventual pressure
+    @:param usable_valves valves not yet opened
+    @:param current_valves the valve each person is currently located at"""
     global TEP_max
-    global best_sequence
+    # global best_sequence
 
-    # return if the current sequence couldn't possibly beat the current max TEP
-    max_extra_TEP = sum([flow_rates[v] * (t_max - min(t) - 1) for v in usable_valves])
+    # Return if continuing the current sequence couldn't possibly beat the current max TEP.
+    # We pretend that the person with more time left could turn on all remaining valves
+    # in just 2 minutes, providing and upper bound on TEP without much calculation.
+    t_min = t[0] if t[0] <= t[1] else t[1]
+    max_extra_TEP = 0
+    for v in usable_valves:
+        max_extra_TEP += flow_rates[v] * (t_max - t_min - 2)
     if TEP + max_extra_TEP <= TEP_max:
         return
 
@@ -86,20 +100,24 @@ def find_max_TEP(t, t_max, TEP, usable_valves, current_valves, sequence):
                 new_TEP = TEP + flow_rates[next_valve] * (t_max - new_t[person])  # add TEP from opening valve
                 new_current_valves = current_valves[:]
                 new_current_valves[person] = next_valve
-                new_sequence = sequence[:]
-                new_sequence.append((new_t[person], person, next_valve))
-                new_usable_valves = usable_valves[:]
+                # new_sequence = sequence[:]
+                # new_sequence.append((new_t[person], person, next_valve))
+                new_usable_valves = usable_valves.copy()
                 new_usable_valves.remove(next_valve)  # remove opened valve (can't use it again)
+
                 # recurse from next valve
-                find_max_TEP(new_t, t_max, new_TEP, new_usable_valves, new_current_valves, new_sequence)
+                find_max_TEP(new_t, t_max, new_TEP, new_usable_valves, new_current_valves)  #, new_sequence)
 
     if TEP > TEP_max:  # check if sequence gives higher TEP than current maximum
         TEP_max = TEP
         print(TEP_max)
-        best_sequence = sequence
+        # best_sequence = sequence
 
 
-find_max_TEP([0, 0], 26, 0, usable_valves, ['AA', 'AA'], best_sequence)  # maximum total eventual pressure achievable in max_t minutes
+# cProfile.run("find_max_TEP([0, 0], 26, 0, usable_valves, ['AA', 'AA'])")  # profile function to optimise
+start_time = time.time()
+find_max_TEP([0, 0], 26, 0, usable_valves, ['AA', 'AA'])  # maximum total eventual pressure achievable in max_t minutes
+print(time.time() - start_time, "seconds")
 print(TEP_max, sorted(best_sequence, key=lambda x: x[0]))
 
 

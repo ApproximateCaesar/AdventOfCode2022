@@ -9,6 +9,7 @@ due to the time limit."""
 from collections import deque
 import re
 from pprint import PrettyPrinter
+import time
 
 
 def all_pairs_shortest_paths(adjacency_dict):
@@ -85,7 +86,9 @@ def find_max_TEP(t, t_max, TEP, usable_valves, current_valve, sequence):
         best_sequence = sequence
 
 
+start_time = time.time()
 find_max_TEP(0, 30, 0, usable_valves, 'AA', best_sequence)  # maximum total eventual pressure achievable in max_t minutes
+print(time.time() - start_time, "seconds")
 print(TEP_max, best_sequence)
 
 
