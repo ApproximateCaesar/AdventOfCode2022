@@ -7,7 +7,7 @@ This is the naive but intuitive solution and won't be fast enough for part 2.
 import time
 
 PATH = "C:/Users/Julian_local/Documents/Coding Projects/AdventOfCode2022/"
-with open(PATH + "day17_pyroclastic_flow/day17_input.txt") as f:
+with open(PATH + "day17_pyroclastic_flow/day17_example_input.txt") as f:
     jet_pattern = f.read().strip('\n')
 
 # each rock type is given as a list of points, with coords relative to the bottom-left of their bounding box
@@ -71,6 +71,7 @@ for i in range(NUM_ROCKS):
     falling_rock = get_shifted_rock(INITIAL_ROCK_X, tower_height + INITIAL_ROCK_Y_OFFSET, ROCK_TYPES[i % 5])
     at_rest = False  # Whether the current rock has come to rest
     while not at_rest:
+        print(i, tower_height, i % 5, next_jet_index % jet_pattern_length)
         # get pushed by one unit by jet
         if jet_pattern[next_jet_index % jet_pattern_length] == '<':  # left
             shifted_falling_rock = get_shifted_rock(-1, 0, falling_rock)
