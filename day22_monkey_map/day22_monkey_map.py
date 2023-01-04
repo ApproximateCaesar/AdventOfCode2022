@@ -49,7 +49,7 @@ for i in range(len(movements)):
     num_steps = movements[i]
     step_direction = step_directions[facing]
     step = 0
-    for step in range(num_steps):  # TODO check steps off by 1 error
+    for step in range(num_steps):
         next_pos = (pos[0] + step_direction[0], pos[1] + step_direction[1])
         if not inbounds(next_pos, row_bounds):  # wrap around if needed
             if facing == 0:  # moving right
